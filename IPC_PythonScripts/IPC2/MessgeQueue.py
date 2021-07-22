@@ -9,10 +9,10 @@ from time import sleep
 try:
     import queue
 except ImportError:
-    import Queue as q
+    import queue as q
 
 logging.basicConfig(level=logging.DEBUG,
-                    format='(%(threadName)-9s) %(message)s', )
+                    format='(%(threadName)-5s) %(message)s', )
 
 buffer_size = 20
 q = queue.Queue(buffer_size)
@@ -32,7 +32,7 @@ class Utils():
 
 class producer_thread(Thread):
     def __init__(self, group=None, target=None, name=None,
-                 args=(), kwargs=None, verbose=None):
+                 args=(), kwargs={}, verbose=None):
         Path(getcwd() + "/Output/Producer").mkdir(parents=True, exist_ok=True)
         super(producer_thread, self).__init__()
         self.target = target
@@ -55,7 +55,7 @@ class producer_thread(Thread):
 
 class consumer_thread(Thread):
     def __init__(self, group=None, target=None, name=None,
-                 args=(), kwargs=None, verbose=None):
+                 args=(), kwargs={}, verbose=None):
         Path(getcwd() + "/Output/Consumer").mkdir(parents=True, exist_ok=True)
         super(consumer_thread, self).__init__()
         self.target = target

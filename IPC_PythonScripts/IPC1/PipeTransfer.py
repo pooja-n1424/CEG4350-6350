@@ -16,27 +16,22 @@ def create_consumer_data_file(name, data):
     f.close()
 
 def communication(producer_file_name, producer_file_data):
-    # file descriptors r, w for reading and writing
-    r, w = os.pipe()
-      
-    processid = os.fork()
-    if processid:
-        # This is the parent process
-        # Closes file descriptor w
-        os.close(w)
-        r = os.fdopen(r)
-        print ("Parent reading")
-        str = r.read()
-        print( "Parent reads =", str)
+    re, wr = os.pipe()
+    process_id = os.fork()
+    if process_id:
+        os.close(wr)
+        re = os.fdopen(re)
+        print ("Parent_Process read")
+        str = re.read()
+        print( "Parent_Process reads =", str)
     else:
-        # This is the child process
-        os.close(r)
-        w = os.fdopen(w, 'w')
-        print ("Child writing")
-        w.write(producer_file_data)
-        print("Child writes = ", producer_file_data)
+        os.close(re)
+        wr = os.fdopen(wr, 'w')
+        print ("Child_Process writing")
+        wr.write(producer_file_data)
+        print("Child_Process writes = ", producer_file_data)
         create_consumer_data_file(producer_file_name, producer_file_data)
-        w.close()
+        wr.close()
 
 if __name__ == '__main__':
     pathlib.Path(os.getcwd() + "/Output/consumer/").mkdir(parents=True, exist_ok=True)
@@ -44,7 +39,7 @@ if __name__ == '__main__':
     for x in range(2):
         producer_file_name = "produceddatafile_" + str(x)
         create_producer_data_file(producer_file_name)
-        producer_file = os.open( os.getcwd() + "/Output/producer/" + producer_file_name + ".txt", os.O_RDWR|os.O_CREAT )
-        r = os.fdopen(producer_file)
-        producer_file_data = r.read()
+        producer_file = os.open(os.getcwd() + "/Output/producer/" + producer_file_name + ".txt", os.O_RDWR | os.O_CREAT)
+        re = os.fdopen(producer_file)
+        producer_file_data = re.read()
         communication(producer_file_name, producer_file_data)
